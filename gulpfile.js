@@ -24,23 +24,7 @@ var files = {
   ],
 
   css: [
-    './node_modules/bootstrap/dist/css/bootstrap.min.css',
-    './bower_components/bootstrap-material-design/dist/css/roboto.min.css',
-    './bower_components/bootstrap-material-design/dist/css/material.min.css',
-    './bower_components/bootstrap-material-design/dist/css/ripples.min.css',
-    './node_modules/fixed-data-table/dist/fixed-data-table.min.css'
-  ],
-
-  fonts: [
-    './node_modules/bootstrap/dist/fonts/*',
-    './bower_components/bootstrap-material-design/dist/fonts/*',
-  ],
-
-  js: [
-    './node_modules/jquery/dist/jquery.min.js',
-    './node_modules/bootstrap/dist/js/bootstrap.min.js',
-    './bower_components/bootstrap-material-design/dist/js/ripples.min.js',
-    './bower_components/bootstrap-material-design/dist/js/material.min.js',
+    './src/components/data-table/material-table.css'
   ]
 };
 
@@ -117,33 +101,6 @@ var cssTask = function (options) {
 
 };
 
-var jsTask = function (options) {
-
-  var start = new Date();
-  console.log('Building JS bundle');
-  gulp.src(options.src)
-    .pipe(concat('styles.js'))
-    .pipe(gulpif(!options.development, streamify(uglify())))
-    .pipe(gulp.dest(options.dest))
-    .pipe(gulpif(options.development, connect.reload()))
-    .pipe(notify(function () {
-      console.log('JS bundle built in ' + (Date.now() - start) + 'ms');
-    }));
-
-};
-
-var fontsTask = function (options) {
-
-  var start = new Date();
-  console.log('Copying fonts');
-  gulp.src(files.fonts)
-    .pipe(gulp.dest(options.dest))
-    .on('end', function () {
-      console.log('Fonts copied in ' + (Date.now() - start) + 'ms');
-    });
-
-};
-
 gulp.task('deploy', function () {
 
   browserifyTask({
@@ -156,17 +113,6 @@ gulp.task('deploy', function () {
     development: false,
     src: files.css,
     dest: './dist/styles'
-  });
-
-  jsTask({
-    development: false,
-    src: files.js,
-    dest: './dist/scripts'
-  });
-
-  fontsTask({
-    src: files.fonts,
-    dest: './dist/fonts'
   });
 
 });
@@ -185,17 +131,6 @@ gulp.task('default', function() {
     dest: './build/styles'
   };
 
-  var jsOpt = {
-    development: true,
-    src: files.js,
-    dest: './build/scripts'
-  };
-
-  var fontsOpt = {
-    src: files.fonts,
-    dest: './build/fonts'
-  };
-
   var serverOpt = {
     root: './build',
     port: 8889,
@@ -204,13 +139,10 @@ gulp.task('default', function() {
 
   browserifyTask(browserifyOpt);
   cssTask(cssOpt);
-  jsTask(jsOpt);
-  fontsTask(fontsOpt);
   connect.server(serverOpt);
 
-  var watcher = gulp.watch(Array.prototype.concat(files.js, files.css), function () {
+  var watcher = gulp.watch(files.css, function () {
     cssTask(cssOpt);
-    jsTask(jsOpt);
   });
 
 });

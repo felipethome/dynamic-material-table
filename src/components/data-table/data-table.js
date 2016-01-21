@@ -103,12 +103,12 @@ var DataTable = React.createClass({
       .promise
       .then(function (description) {
         component.setState(function (previousState, currentProps) {
-          description.fields_to_show.forEach(function (field) {
+          description.columns.forEach(function (field) {
             newColumnWidths[field] = component.props.columnWidth;
           });
 
           return {
-            rowsCount: description.rows_count,
+            rowsCount: description.rowsCount,
             columnWidths: newColumnWidths
           };
         }, component._getMoreData.bind(component, 0));
@@ -135,7 +135,7 @@ var DataTable = React.createClass({
     
     if (this._shouldRequestBeMade(start, end)) {
       dataPromise = this._cancelablePromise(
-        Request.getContent(this.props.fetchURL + start + '/' + (end + 1))
+        Request.getContent(this.props.fetchURL + '?_start=' + start + '&_end=' + (end + 1))
       );
 
       dataPromise
@@ -144,8 +144,8 @@ var DataTable = React.createClass({
           component.setState(function (previousState, currentProps) {
             var newData = previousState.data.slice();
 
-            for (var i = 0; i < data.word_list.length; i++) {
-              newData[i + start] = data.word_list[i];
+            for (var i = 0; i < data.length; i++) {
+              newData[i + start] = data[i];
             }
 
             return {
