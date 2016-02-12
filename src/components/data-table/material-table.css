@@ -2,7 +2,8 @@
  * Table.
  */
 .public_fixedDataTable_main {
-  border: 1px solid rgba(0, 0, 0, .12);
+  background-color: #fff;
+  border: 0px solid rgba(0, 0, 0, .12);
   box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),
     0 3px 1px -2px rgba(0,0,0,.2),
     0 1px 5px 0 rgba(0,0,0,.12);
@@ -109,13 +110,14 @@
  * Header.
  */
 .public_fixedDataTable_header .public_fixedDataTableCell_main {
-  font-weight: bold;
+  font-weight: 500;
   color: #fff;
   text-transform: capitalize;
+  border-right: 1px solid #fff;
 }
 
 .public_fixedDataTable_header.public_fixedDataTableRow_main {
-  background-color: #00897b;
+  background-color: #009688;
   box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
 }
 
@@ -127,6 +129,23 @@
 .public_fixedDataTable_header .public_fixedDataTableCell_main {
   background-color: transparent;
   background-image: none;
+}
+
+.public_fixedDataTable_header .clickableHeader {
+  cursor: pointer;
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+  text-decoration: none;
+}
+
+.public_fixedDataTable_header .sortIcon {
+  display: inline-block;
+  vertical-align: middle;
+  fill: #fff;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  margin-bottom: 2px;
 }
 
 
@@ -244,8 +263,8 @@
 }
  
 .checkbox-group input[type=checkbox]:checked ~ label .box {
-  background: #616161;
-  border-color: #616161;
+  background: #009688;
+  border-color: #009688;
 }
  
 .checkbox-group input[type=checkbox]:checked ~ label .check {
@@ -459,7 +478,7 @@ body[dir="rtl"] .fixedDataTableColumnResizerLineLayout_main {
  */
 .fixedDataTableLayout_main {
   border-style: solid;
-  border-width: 1px;
+  border-width: 0;
   box-sizing: border-box;
   overflow: hidden;
   position: relative;

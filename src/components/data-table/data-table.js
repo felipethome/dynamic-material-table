@@ -14,16 +14,17 @@ var DataTable = React.createClass({
   displayName: "DataTable",
 
   propTypes: {
+    columnWidth: React.PropTypes.number,
     descriptionURL: React.PropTypes.string.isRequired,
     fetchURL: React.PropTypes.string.isRequired,
-    tableWidth: React.PropTypes.number,
-    tableHeight: React.PropTypes.number,
     headerHeight: React.PropTypes.number,
-    rowHeight: React.PropTypes.number,
-    columnWidth: React.PropTypes.number,
+    onRowClick: React.PropTypes.func,
+    onSort: React.PropTypes.func,
     radius: React.PropTypes.number,
+    rowHeight: React.PropTypes.number,
     requestThreshold: React.PropTypes.number,
-    onRowClick: React.PropTypes.func
+    tableHeight: React.PropTypes.number,
+    tableWidth: React.PropTypes.number
   },
 
   getDefaultProps: function() {
@@ -31,21 +32,22 @@ var DataTable = React.createClass({
       tableWidth: 800,
       tableHeight: 500,
       headerHeight: 50,
-      columnWidth: 100,
+      columnWidth: 120,
       rowHeight: 50,
       radius: 100,
-      requestThreshold: 50
+      requestThreshold: 25
     };
   },
 
   getInitialState: function () {
     return {
-      tableWidth: this.props.tableWidth,
-      tableHeight: this.props.tableHeight,
+      columns: {},
+      data: [],
       rowsCount: 0,
-      columnWidths: {},
       selectedRows: {},
-      data: []
+      sortInfo: {columnKey: '', asc: false},
+      tableHeight: this.props.tableHeight,
+      tableWidth: this.props.tableWidth
     };
   },
 
@@ -93,7 +95,7 @@ var DataTable = React.createClass({
 
   _loadInitialData: function () {
     var component = this;
-    var newColumnWidths = {};
+    var newColumns = {};
 
     var descPromise = this._cancelablePromise(
       Request.getContent(this.props.descriptionURL)
@@ -102,14 +104,28 @@ var DataTable = React.createClass({
     descPromise
       .promise
       .then(function (description) {
-        component.setState(function (previousState, currentProps) {
-          description.columns.forEach(function (field) {
-            newColumnWidths[field] = component.props.columnWidth;
+        component.setState(function () {
+          description.columns.forEach(function (column) {
+            if (typeof column === 'string') {
+              newColumns[column] = {};
+              newColumns[column].width = component.props.columnWidth;
+              newColumns[column].label = column;
+              newColumns[column].type = 'default';
+            }
+            else if (column !== null && typeof column === 'object') {
+              newColumns[column.key] = {};
+              newColumns[column.key].label = column.label || column.key;
+              newColumns[column.key].width = column.width || component.props.columnWidth;
+              newColumns[column.key].type = column.type || 'default';
+            }
+            else {
+              throw new Error('The column description needs to be a string or object.');
+            }
           });
 
           return {
             rowsCount: description.rowsCount,
-            columnWidths: newColumnWidths
+            columns: newColumns
           };
         }, component._getMoreData.bind(component, 0));
       });
@@ -119,8 +135,6 @@ var DataTable = React.createClass({
     var component = this;
     var start = Math.max(0, index - this.props.radius);
     var end = Math.min(this.state.rowsCount, index + this.props.radius);
-    var originalStart = start;
-    var originalEnd = end;
 
     // Try to shrink the interval before doing the request
     while ((this.state.data[start] || this.state.data[end]) && start !== end) {
@@ -177,12 +191,66 @@ var DataTable = React.createClass({
     this._getMoreData(index);
   },
 
-  _getCell: function (col, props) {
+  _changeSort: function (columnKey) {
+      this.setState({
+        sortInfo: {
+          columnKey: columnKey,
+          asc: this.state.sortInfo.columnKey === columnKey
+            ? (this.state.sortInfo.asc ? false : true) : false
+        }
+      }, function () {
+        if (this.props.onSort) this.props.onSort(this.state.sortInfo);
+      });
+    },
+
+    _getHeader: function (column, props) {
+      var header;
+      var arrowDownward;
+      var arrowUpward;
+
+      if (this.props.onSort) {
+        arrowDownward = (
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
+          </svg>
+        );
+
+        arrowUpward = (
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
+          </svg>
+        );
+
+        header = (
+          <Cell>
+            <a className="clickableHeader" onClick={this._changeSort.bind(this, props.columnKey)}>
+              <span className="sortIcon">
+                {(this.state.sortInfo.columnKey === props.columnKey
+                  ? (!this.state.sortInfo.asc
+                      ? arrowUpward
+                      : arrowDownward)
+                  : '')}
+              </span>
+              {column.label}
+            </a>
+          </Cell>
+        );
+      }
+      else {
+        header = <Cell>{column.label}</Cell>
+      }
+
+      return header;
+    },
+
+  _getCell: function (columnKey, props) {
     return (
       <Cell>
         {
           this.state.data[props.rowIndex]
-          ? this.state.data[props.rowIndex][col]
+          ? this.state.data[props.rowIndex][columnKey]
           : 'Loading'
         }
       </Cell>
@@ -230,13 +298,13 @@ var DataTable = React.createClass({
   },
 
   _handleColumnResizeEnd(newColumnWidth, columnKey) {
-    this.setState(function (previousState, currentProps) {
+    this.setState(function (previousState) {
       var newObj = {};
-      newObj[columnKey] = newColumnWidth;
-      var newColumnWidths = Update(previousState.columnWidths, {$merge: newObj});
+      var newColumns = Update(previousState.columns, {$merge: {}});
+      newColumns[columnKey].width = newColumnWidth;
       
       return {
-        columnWidths: newColumnWidths
+        columnWidths: newColumns
       };
     });
   },
@@ -253,14 +321,14 @@ var DataTable = React.createClass({
       />
     );
 
-    Object.keys(this.state.columnWidths).forEach(function (column, i) {
+    Object.keys(this.state.columns).forEach(function (columnKey) {
       columns.push(
         <Column
-          key={i}
-          columnKey={column}
-          header={<Cell>{column}</Cell>}
-          width={this.state.columnWidths[column]}
-          cell={this._getCell.bind(this, column)}
+          key={columnKey}
+          columnKey={columnKey}
+          header={this._getHeader.bind(this, this.state.columns[columnKey])}
+          cell={this._getCell.bind(this, columnKey)}
+          width={this.state.columns[columnKey].width}
           isResizable
         />
       );
