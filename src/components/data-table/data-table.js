@@ -21,21 +21,24 @@ var DataTable = React.createClass({
     onRowClick: React.PropTypes.func,
     onSort: React.PropTypes.func,
     radius: React.PropTypes.number,
-    rowHeight: React.PropTypes.number,
     requestThreshold: React.PropTypes.number,
+    resizable: React.PropTypes.bool,
+    rowHeight: React.PropTypes.number,
+    selectable: React.PropTypes.bool,
+    sortable: React.PropTypes.bool,
     tableHeight: React.PropTypes.number,
     tableWidth: React.PropTypes.number
   },
 
   getDefaultProps: function() {
     return {
-      tableWidth: 800,
-      tableHeight: 500,
+      tableWidth: 1000,
+      tableHeight: 700,
       headerHeight: 50,
       columnWidth: 120,
       rowHeight: 50,
-      radius: 100,
-      requestThreshold: 25
+      radius: 200,
+      requestThreshold: 50
     };
   },
 
@@ -45,7 +48,7 @@ var DataTable = React.createClass({
       data: [],
       rowsCount: 0,
       selectedRows: {},
-      sortInfo: {columnKey: '', asc: false},
+      sortInfo: {columnKey: '', asc: true},
       tableHeight: this.props.tableHeight,
       tableWidth: this.props.tableWidth
     };
@@ -58,13 +61,17 @@ var DataTable = React.createClass({
   },
 
   componentDidMount: function () {
-    window.addEventListener('resize', this._handleResize);
+    if (this.props.resizable) {
+      window.addEventListener('resize', this._handleResize);
+    }
 
     this._loadInitialData();
   },
 
   componentWillUnmount: function () {
-    window.removeEventListener('resize', this._handleResize);
+    if (this.props.resizable) {
+      window.removeEventListener('resize', this._handleResize);
+    }
 
     this._promises.forEach(function (promise) {
       promise.cancel();
@@ -192,69 +199,161 @@ var DataTable = React.createClass({
   },
 
   _changeSort: function (columnKey) {
-      this.setState({
-        sortInfo: {
-          columnKey: columnKey,
-          asc: this.state.sortInfo.columnKey === columnKey
-            ? (this.state.sortInfo.asc ? false : true) : false
-        }
-      }, function () {
-        if (this.props.onSort) this.props.onSort(this.state.sortInfo);
-      });
-    },
-
-    _getHeader: function (column, props) {
-      var header;
-      var arrowDownward;
-      var arrowUpward;
-
-      if (this.props.onSort) {
-        arrowDownward = (
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0h24v24H0V0z" fill="none"/>
-            <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
-          </svg>
-        );
-
-        arrowUpward = (
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0h24v24H0V0z" fill="none"/>
-            <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
-          </svg>
-        );
-
-        header = (
-          <Cell>
-            <a className="clickableHeader" onClick={this._changeSort.bind(this, props.columnKey)}>
-              <span className="sortIcon">
-                {(this.state.sortInfo.columnKey === props.columnKey
-                  ? (!this.state.sortInfo.asc
-                      ? arrowUpward
-                      : arrowDownward)
-                  : '')}
-              </span>
-              {column.label}
-            </a>
-          </Cell>
-        );
+    this.setState({
+      sortInfo: {
+        columnKey: columnKey,
+        asc: this.state.sortInfo.columnKey === columnKey
+          ? (this.state.sortInfo.asc ? false : true) : false
       }
-      else {
-        header = <Cell>{column.label}</Cell>
+    }, function () {
+      if (this.props.onSort) this.props.onSort(this.state.sortInfo);
+    });
+  },
+
+  _getHeader: function (column, props) {
+    var header;
+    var arrowDownward;
+    var arrowUpward;
+
+    if (this.props.sortable) {
+      arrowDownward = (
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0V0z" fill="none"/>
+          <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
+        </svg>
+      );
+
+      arrowUpward = (
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0V0z" fill="none"/>
+          <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
+        </svg>
+      );
+
+      header = (
+        <Cell>
+          <a className="clickableHeader" onClick={this._changeSort.bind(this, props.columnKey)}>
+            <span className="sortIcon">
+              {(this.state.sortInfo.columnKey === props.columnKey
+                ? (!this.state.sortInfo.asc
+                    ? arrowDownward
+                    : arrowUpward)
+                : '')}
+            </span>
+            {column.label}
+          </a>
+        </Cell>
+      );
+    }
+    else {
+      header = <Cell>{column.label}</Cell>
+    }
+
+    return header;
+  },
+
+  _stopPropagation: function (e) {
+    e.stopPropagation();
+  },
+
+  _createImageCell: function (content) {
+    var styles = {
+      img: {
+        width: 50,
+        height: 50,
+        backgroundImage: 'url(' + content + ')',
+        backgroundSize: '100%',
+        margin: '0 0 0 auto'
       }
+    };
 
-      return header;
-    },
+    return (
+      <div className="image-container">
+        <div style={styles.img}>{' '}</div>
+      </div>
+    );
+  },
 
-  _getCell: function (columnKey, props) {
+  _createBoldCell: function (content) {
     return (
       <Cell>
-        {
-          this.state.data[props.rowIndex]
-          ? this.state.data[props.rowIndex][columnKey]
-          : 'Loading'
-        }
+        <span className="bold">
+          {content}
+        </span>
       </Cell>
     );
+  },
+
+  _createTextCell: function (content) {
+    return (
+      <Cell>
+        {content}
+      </Cell>
+    );
+  },
+
+  _createLinkCell: function (content) {
+    return (
+      <Cell>
+        <a href={content} onClick={this._stopPropagation}>
+          {content}
+        </a>
+      </Cell>
+    );
+  },
+
+  _createEmailCell: function (content) {
+    return (
+      <Cell>
+        <a
+          className="email"
+          href={'mailto:' + content}
+          onClick={this._stopPropagation}
+        >
+          {content}
+        </a>
+      </Cell>
+    );
+  },
+
+  _createLoadingCell: function () {
+    return (
+      <Cell>
+        {'Loading'}
+      </Cell>
+    );
+  },
+
+  _getCell: function (columnKey, props) {
+    var cell;
+    var content;
+
+    if (this.state.data[props.rowIndex]) {
+      content = this.state.data[props.rowIndex][columnKey];
+
+      switch(this.state.columns[columnKey].type) {
+        case 'email':
+          cell = this._createEmailCell(content);
+          break;
+        case 'link':
+          cell = this._createLinkCell(content);
+          break;
+        case 'bold':
+          cell = this._createBoldCell(content);
+          break;
+        case 'image':
+          cell = this._createImageCell(content);
+          break;
+        default:
+          cell = this._createTextCell(content);
+          break;
+      }
+    }
+    else {
+      cell = this._createLoadingCell();
+    }
+
+    return cell;
   },
 
   _getSelectionCell: function (props) {
@@ -312,14 +411,16 @@ var DataTable = React.createClass({
   render: function () {
     var columns = [];
 
-    columns.push(
-      <Column
-        key={-1}
-        width={80}
-        cell={this._getSelectionCell}
-        fixed
-      />
-    );
+    if (this.props.selectable) {
+      columns.push(
+        <Column
+          key={-1}
+          width={80}
+          cell={this._getSelectionCell}
+          fixed
+        />
+      );
+    }
 
     Object.keys(this.state.columns).forEach(function (columnKey) {
       columns.push(
@@ -345,7 +446,8 @@ var DataTable = React.createClass({
         isColumnResizing={false}
         onScrollEnd={this._handleScrollEnd}
         onRowClick={this._handleRowClick}
-        rowClassNameGetter={this._getRowClassName}>
+        rowClassNameGetter={this._getRowClassName}
+      >
         {columns}
       </Table>
     );

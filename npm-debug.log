@@ -1,0 +1,45 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'run', 'mock' ]
+2 info using npm@3.7.3
+3 info using node@v5.4.1
+4 verbose run-script [ 'premock', 'mock', 'postmock' ]
+5 info lifecycle dynamic-material-table@~premock: dynamic-material-table@
+6 silly lifecycle dynamic-material-table@~premock: no script for premock, continuing
+7 info lifecycle dynamic-material-table@~mock: dynamic-material-table@
+8 verbose lifecycle dynamic-material-table@~mock: unsafe-perm in lifecycle true
+9 verbose lifecycle dynamic-material-table@~mock: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/Users/felipe/GitHub/dynamic-material-table/node_modules/.bin:/usr/local/bin:/usr/local/lib/node_modules/npm/bin/node-gyp-bin:/Users/felipe/GitHub/dynamic-material-table/node_modules/.bin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin
+10 verbose lifecycle dynamic-material-table@~mock: CWD: /Users/felipe/GitHub/dynamic-material-table
+11 silly lifecycle dynamic-material-table@~mock: Args: [ '-c', 'json-server src/mocked-data/db.js' ]
+12 silly lifecycle dynamic-material-table@~mock: Returned: code: 1  signal: null
+13 info lifecycle dynamic-material-table@~mock: Failed to exec mock script
+14 verbose stack Error: dynamic-material-table@ mock: `json-server src/mocked-data/db.js`
+14 verbose stack Exit status 1
+14 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:239:16)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at EventEmitter.emit (events.js:172:7)
+14 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at ChildProcess.emit (events.js:172:7)
+14 verbose stack     at maybeClose (internal/child_process.js:821:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+15 verbose pkgid dynamic-material-table@
+16 verbose cwd /Users/felipe/GitHub/dynamic-material-table
+17 error Darwin 15.3.0
+18 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "run" "mock"
+19 error node v5.4.1
+20 error npm  v3.7.3
+21 error code ELIFECYCLE
+22 error dynamic-material-table@ mock: `json-server src/mocked-data/db.js`
+22 error Exit status 1
+23 error Failed at the dynamic-material-table@ mock script 'json-server src/mocked-data/db.js'.
+23 error Make sure you have the latest version of node.js and npm installed.
+23 error If you do, this is most likely a problem with the dynamic-material-table package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     json-server src/mocked-data/db.js
+23 error You can get information on how to open an issue for this project with:
+23 error     npm bugs dynamic-material-table
+23 error Or if that isn't available, you can get their info via:
+23 error     npm owner ls dynamic-material-table
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]

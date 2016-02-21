@@ -105,6 +105,19 @@
   vertical-align: middle;
 }
 
+.public_fixedDataTableCell_main .email {
+  color: #4caf50;
+  text-decoration: none;
+}
+
+.public_fixedDataTableCell_main .bold {
+  font-weight: 600;
+}
+
+.public_fixedDataTableCell_main .image-container {
+  padding: 0 20px 0 0;
+}
+
 
 /**
  * Header.
@@ -117,7 +130,7 @@
 }
 
 .public_fixedDataTable_header.public_fixedDataTableRow_main {
-  background-color: #009688;
+  background-color: #66bb6a;
   box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
 }
 
@@ -263,8 +276,8 @@
 }
  
 .checkbox-group input[type=checkbox]:checked ~ label .box {
-  background: #009688;
-  border-color: #009688;
+  background: #4caf50;
+  border-color: #4caf50;
 }
  
 .checkbox-group input[type=checkbox]:checked ~ label .check {
