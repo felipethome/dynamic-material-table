@@ -37,8 +37,8 @@ Here are the properties you can set (in bold are the ones you definetely should 
 6. **onSort:** optional. A callback that if defined means the columns can be sorted. Understand that the data is being fetched on demand which means is not possible to sort the rows in the client side. So, basically, the only the component does is indicate to the user the column will be sorted and pass to the callback the column the user is asking to sort and if it should be sorted ascending or desceding order.
 7. tableHeight: optional. As the name suggests, it is the table height.
 8. tableWidth: optional. As the name suggests, it is the table width.
-9. selectable: bool. If true, creates a column to indicate that the row is selected.
-10. resizable: bool. If true, the table will resize if the user resizes the window.
+9. isSelectable: bool. If true, creates a column to indicate that the row is selected.
+10. isResizable: bool. If true, the table will resize if the user resizes the window.
 
 Advanced:
 
@@ -54,8 +54,10 @@ The descriptionURL needs to return a JSON with two properties:
         {
           key: 'col1', // Is required and it needs to be unique for each column
           label: 'Example 1', // This is a string with a friendly name to show to the user
-          type: 'default', // it can be default, bold, link, email or image
-          width: 200 // The column width
+          type: 'email', // It can be bold, link, email or image. If undefined it is just common text
+          width: 200, // The column width,
+          isResizable: true, // If true the column is resizable
+          isSortable: true // If true the column is sortable
         }
 **Obs:** your columns array doesn't need to describe all the columns returned by the fetchURL, but it needs to describe the ones you want to show. In other words, just put in this array the columns you want to display to the user.
 

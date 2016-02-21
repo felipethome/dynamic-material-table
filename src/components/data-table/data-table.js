@@ -24,8 +24,7 @@ var DataTable = React.createClass({
     requestThreshold: React.PropTypes.number,
     resizable: React.PropTypes.bool,
     rowHeight: React.PropTypes.number,
-    selectable: React.PropTypes.bool,
-    sortable: React.PropTypes.bool,
+    isSelectable: React.PropTypes.bool,
     tableHeight: React.PropTypes.number,
     tableWidth: React.PropTypes.number
   },
@@ -38,7 +37,9 @@ var DataTable = React.createClass({
       columnWidth: 120,
       rowHeight: 50,
       radius: 200,
-      requestThreshold: 50
+      requestThreshold: 50,
+      isSelectable: true,
+      isResizable: false
     };
   },
 
@@ -113,20 +114,16 @@ var DataTable = React.createClass({
       .then(function (description) {
         component.setState(function () {
           description.columns.forEach(function (column) {
-            if (typeof column === 'string') {
-              newColumns[column] = {};
-              newColumns[column].width = component.props.columnWidth;
-              newColumns[column].label = column;
-              newColumns[column].type = 'default';
-            }
-            else if (column !== null && typeof column === 'object') {
+            if (column !== null && typeof column === 'object') {
               newColumns[column.key] = {};
               newColumns[column.key].label = column.label || column.key;
               newColumns[column.key].width = column.width || component.props.columnWidth;
-              newColumns[column.key].type = column.type || 'default';
+              newColumns[column.key].type = column.type;
+              newColumns[column.key].isResizable = column.isResizable;
+              newColumns[column.key].isSortable = column.isSortable;
             }
             else {
-              throw new Error('The column description needs to be a string or object.');
+              throw new Error('The column description needs to be an object.');
             }
           });
 
@@ -215,7 +212,7 @@ var DataTable = React.createClass({
     var arrowDownward;
     var arrowUpward;
 
-    if (this.props.sortable) {
+    if (this.state.columns[props.columnKey].isSortable) {
       arrowDownward = (
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 0h24v24H0V0z" fill="none"/>
@@ -411,7 +408,7 @@ var DataTable = React.createClass({
   render: function () {
     var columns = [];
 
-    if (this.props.selectable) {
+    if (this.props.isSelectable) {
       columns.push(
         <Column
           key={-1}
@@ -430,7 +427,7 @@ var DataTable = React.createClass({
           header={this._getHeader.bind(this, this.state.columns[columnKey])}
           cell={this._getCell.bind(this, columnKey)}
           width={this.state.columns[columnKey].width}
-          isResizable
+          isResizable={this.state.columns[columnKey].isResizable}
         />
       );
     }, this);

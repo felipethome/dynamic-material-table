@@ -4,11 +4,11 @@ module.exports = function() {
   var rowsCount = 1000;
   var columns = [
     {key: 'Avatar', type: 'image', width: 110},
-    {key: 'First Name'},
-    {key: 'Last Name', type: 'bold'},
-    {key: 'City', width: 160},
-    {key: 'Street', width: 200},
-    {key: 'Email', type: 'email', width: 250}
+    {key: 'First Name', isResizable: true, isSortable: true},
+    {key: 'Last Name', type: 'bold', isResizable: true, isSortable: true},
+    {key: 'City', width: 160, isResizable: true, isSortable: true},
+    {key: 'Street', width: 200, isResizable: true, isSortable: true},
+    {key: 'Email', type: 'email', width: 250, isSortable: true}
   ];
   var data = [];
   
