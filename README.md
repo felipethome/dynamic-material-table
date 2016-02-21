@@ -29,21 +29,21 @@ Check localhost:8889
 You can render the component using *ReactDOM* or inside any other *React* component.
 Here are the properties you can set (in bold are the ones you definetely should notice):
 
-1. columnWidth: optional. Default width for all columns.
-2. **descriptionURL:** required. This URL needs to return a JSON containing all the column descriptions and rows count. More on that below.
-3. **fetchURL:** required. This URL needs to be the base of a REST service able to return your data in pieces. More on that below.
-4. headerHeight: optional. As the name suggests, it is the header height.
-5. **onRowClick:** optional. Callback that will be called every time the user clicks on a row. It will be called with the click event and all the data of that particular row.
-6. **onSort:** optional. A callback that if defined means the columns can be sorted. Understand that the data is being fetched on demand which means is not possible to sort the rows in the client side. So, basically, the only the component does is indicate to the user the column will be sorted and pass to the callback the column the user is asking to sort and if it should be sorted ascending or desceding order.
-7. tableHeight: optional. As the name suggests, it is the table height.
-8. tableWidth: optional. As the name suggests, it is the table width.
-9. isSelectable: bool. If true, creates a column to indicate that the row is selected.
-10. isResizable: bool. If true, the table will resize if the user resizes the window.
+* columnWidth: optional. Default width for all columns.
+* **descriptionURL:** required. This URL needs to return a JSON containing all the column descriptions and rows count. More on that below.
+* **fetchURL:** required. This URL needs to be the base of a REST service able to return your data in pieces. More on that below.
+* headerHeight: optional. As the name suggests, it is the header height.
+* isSelectable: bool. If true, creates a column to indicate that the row is selected.
+* isResizable: bool. If true, the table will resize if the user resizes the window.
+* onRowClick: optional. Callback that will be called every time the user clicks on a row. It will be called with the click event and all the data of that particular row.
+* onSort: optional. A callback that will be called with and object that contains the column to be sorted and if this column will be sorted in ascending or descending order. Understand that the data is being fetched on demand which means is not possible to sort the rows in the client side.
+* tableHeight: optional. As the name suggests, it is the table height.
+* tableWidth: optional. As the name suggests, it is the table width.
 
 Advanced:
 
-1. radius: optional. It defines how much data should be fetched before and after the first row being shown in the screen. So if the current row index is 25 and the radius is 10, the component will fetch data from the rows 15 to 35.
-2. requestThreshold: optional. It defines how many rows the component needs to see as undefined before making a request. So, if your radius is 10, requestThreshold is 5 and currently the first row in the screen is the 1st, it means the component already fetched the data until the row 10th (because of the radius). When you start to scroll and you arrive at the 5th row, the threshold is reached and the component will make a request.
+* radius: optional. It defines how much data should be fetched before and after the first row being shown in the screen. So if the current row index is 25 and the radius is 10, the component will fetch data from the rows 15 to 35.
+* requestThreshold: optional. It defines how many rows the component needs to see as undefined before making a request. So, if your radius is 10, requestThreshold is 5 and currently the first row in the screen is the 1st, it means the component already fetched the data until the row 10th (because of the radius). When you start to scroll and you arrive at the 5th row, the threshold is reached and the component will make a request.
 
 ### descriptionURL and how it makes your component incredible dynamic
 The descriptionURL needs to return a JSON with two properties:
@@ -60,6 +60,7 @@ The descriptionURL needs to return a JSON with two properties:
           isSortable: true // If true the column is sortable
         }
 **Obs:** your columns array doesn't need to describe all the columns returned by the fetchURL, but it needs to describe the ones you want to show. In other words, just put in this array the columns you want to display to the user.
+**Tip:** that means you can have an ID column but not show it to the user. When the user clicks on a row all its columns (even the ones that are not being shown) will be passed to the onRowClick callback.
 
 ### fetchURL and how it is used to fecth your data in pieces
 This needs to be a base URL that is able to return slices of your data. So lets suppose your fetchURL is example.com/data. The component will on demand make requests using this base as follows:
