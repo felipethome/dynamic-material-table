@@ -18,13 +18,13 @@ var DataTable = React.createClass({
     descriptionURL: React.PropTypes.string.isRequired,
     fetchURL: React.PropTypes.string.isRequired,
     headerHeight: React.PropTypes.number,
+    isResizable: React.PropTypes.bool,
+    isSelectable: React.PropTypes.bool,
     onRowClick: React.PropTypes.func,
     onSort: React.PropTypes.func,
     radius: React.PropTypes.number,
     requestThreshold: React.PropTypes.number,
-    resizable: React.PropTypes.bool,
     rowHeight: React.PropTypes.number,
-    isSelectable: React.PropTypes.bool,
     tableHeight: React.PropTypes.number,
     tableWidth: React.PropTypes.number
   },
@@ -62,7 +62,7 @@ var DataTable = React.createClass({
   },
 
   componentDidMount: function () {
-    if (this.props.resizable) {
+    if (this.props.isResizable) {
       window.addEventListener('resize', this._handleResize);
     }
 
@@ -70,7 +70,7 @@ var DataTable = React.createClass({
   },
 
   componentWillUnmount: function () {
-    if (this.props.resizable) {
+    if (this.props.isResizable) {
       window.removeEventListener('resize', this._handleResize);
     }
 
