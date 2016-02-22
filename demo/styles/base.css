@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+}
+
+.list-details-navbar {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  height: 56px;
+  background-color: #2e7d32;
+}
+
+.list-details-navbar .primary {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.list-details-navbar .secondary {
+  flex: 2;
+  display: flex;
+  align-items: center;
+}
+
+.list-details-navbar .aux {
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+}
+
+.list-details-navbar .account-name {
+  display: inline-block;
+  margin-left: 8px;
+  margin-right: 24px;
+  padding-right: 24px;
+  border-right: 1px solid rgba(255,255,255,0.2);
+  font-size: 1.3em;
+  color: #fff;
+  line-height: 1;
+  font-family: 'Roboto', sans-serif;
+}
+
+.list-details-navbar .navbar-button {
+  border: none;
+  border-radius: 2px;
+  background-color: rgba(255,255,255,0.2);
+  padding: 10px 15px;
+  margin: 0 -4px 0 12px;
+  color: #fff;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-family: 'Roboto', sans-serif;
+  transition: ease-out box-shadow .2s;
+  font-size: 1em;
+}
+
+.list-details-navbar .navbar-button:hover {
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24);
+}

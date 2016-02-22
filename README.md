@@ -54,7 +54,7 @@ Advanced:
 * radius: optional. It defines how much data should be fetched before and after the first row being shown in the screen. So if the current row index is 25 and the radius is 10, the component will fetch data from the rows 15 to 35.
 * requestThreshold: optional. It defines how many rows the component needs to see as undefined before making a request. So, if your radius is 10, requestThreshold is 5 and currently the first row in the screen is the 1st, it means the component already fetched the data until the row 10th (because of the radius). When you start to scroll and you arrive at the 5th row, the threshold is reached and the component will make a request.
 
-### descriptionURL and how it makes your component incredible dynamic
+### descriptionURL and how it makes your component incredibly dynamic
 The descriptionURL needs to return a JSON with two properties:
 
 1. rowsCount: integer. The maximum number of rows your table can have. This is a requirement of [Fixed Data Table](https://facebook.github.io/fixed-data-table/).

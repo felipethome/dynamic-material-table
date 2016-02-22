@@ -14,10 +14,10 @@ ReactDOM.render(
   <DataTable
     descriptionURL='http://localhost:3000/description'
     fetchURL='http://localhost:3000/data'
-    tableWidth={1100}
-    resizable
-    selectable
-    sortable
+    tableWidth={window.innerWidth}
+    tableHeight={window.innerHeight - 56}
+    isResizable
+    isSelectable
     onClick={handleRowClick}
     onSort={handleSort}
   />,
