@@ -38,8 +38,6 @@ Here are the properties you can set (in bold are the ones you definetely should 
 * isResizable: bool. If true, the table will resize if the user resizes the window.
 * onRowClick: optional. Callback that will be called every time the user clicks on a row. It will be called with the click event and all the data of that particular row.
 * onSort: optional. A callback that will be called with and object that contains the column to be sorted and if this column will be sorted in ascending or descending order. Understand that the data is being fetched on demand which means is not possible to sort the rows in the client side.
-* tableHeight: optional. As the name suggests, it is the table height.
-* tableWidth: optional. As the name suggests, it is the table width.
 * **params:** optional. Object containing the name of the parameters for the REST API. Example:
 
         params: {
@@ -48,6 +46,8 @@ Here are the properties you can set (in bold are the ones you definetely should 
           sort: '_sort',
           order: '_order'
         }
+* tableHeight: optional. As the name suggests, it is the table height.
+* tableWidth: optional. As the name suggests, it is the table width.
 
 Advanced:
 
