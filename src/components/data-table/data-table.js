@@ -22,6 +22,7 @@ var DataTable = React.createClass({
     isSelectable: React.PropTypes.bool,
     onRowClick: React.PropTypes.func,
     onSort: React.PropTypes.func,
+    params: React.PropTypes.objectOf(React.PropTypes.string),
     radius: React.PropTypes.number,
     requestThreshold: React.PropTypes.number,
     rowHeight: React.PropTypes.number,
@@ -39,7 +40,13 @@ var DataTable = React.createClass({
       radius: 200,
       requestThreshold: 50,
       isSelectable: true,
-      isResizable: false
+      isResizable: false,
+      params: {
+        start: '_start',
+        end: '_end',
+        sort: '_sort',
+        order: '_order'
+      }
     };
   },
 
@@ -47,9 +54,10 @@ var DataTable = React.createClass({
     return {
       columns: {},
       data: [],
+      initialRowIndex: 0,
       rowsCount: 0,
       selectedRows: {},
-      sortInfo: {columnKey: '', asc: true},
+      sortInfo: {columnKey: '', asc: false},
       tableHeight: this.props.tableHeight,
       tableWidth: this.props.tableWidth
     };
@@ -139,6 +147,7 @@ var DataTable = React.createClass({
     var component = this;
     var start = Math.max(0, index - this.props.radius);
     var end = Math.min(this.state.rowsCount, index + this.props.radius);
+    var requestURL;
 
     // Try to shrink the interval before doing the request
     while ((this.state.data[start] || this.state.data[end]) && start !== end) {
@@ -152,8 +161,17 @@ var DataTable = React.createClass({
     }
     
     if (this._shouldRequestBeMade(start, end)) {
+      requestURL = this.props.fetchURL +
+        '?' + this.props.params.start + '=' + start +
+        '&' + this.props.params.end + '=' + end;
+
+      if (this.state.sortInfo.columnKey) {
+        requestURL += '&' + this.props.params.sort + '=' + this.state.sortInfo.columnKey;
+        requestURL += '&' + this.props.params.order + '=' + (this.state.sortInfo.asc ? 'ASC' : 'DESC');
+      }
+
       dataPromise = this._cancelablePromise(
-        Request.getContent(this.props.fetchURL + '?_start=' + start + '&_end=' + (end + 1))
+        Request.getContent(requestURL)
       );
 
       dataPromise
@@ -196,13 +214,17 @@ var DataTable = React.createClass({
   },
 
   _changeSort: function (columnKey) {
+    this._rowIndex = 0;
     this.setState({
+      data: [],
       sortInfo: {
         columnKey: columnKey,
         asc: this.state.sortInfo.columnKey === columnKey
-          ? (this.state.sortInfo.asc ? false : true) : false
+          ? (this.state.sortInfo.asc ? false : true) : true
       }
     }, function () {
+      this._rowIndex = undefined;
+      this._getMoreData.call(this, 0);
       if (this.props.onSort) this.props.onSort(this.state.sortInfo);
     });
   },
@@ -389,7 +411,7 @@ var DataTable = React.createClass({
     }
   },
 
-  _handleColumnResizeEnd(newColumnWidth, columnKey) {
+  _handleColumnResizeEnd: function (newColumnWidth, columnKey) {
     this.setState(function (previousState) {
       var newObj = {};
       var newColumns = Update(previousState.columns, {$merge: {}});
@@ -440,6 +462,7 @@ var DataTable = React.createClass({
         onScrollEnd={this._handleScrollEnd}
         onRowClick={this._handleRowClick}
         rowClassNameGetter={this._getRowClassName}
+        scrollToRow={this._rowIndex}
       >
         {columns}
       </Table>

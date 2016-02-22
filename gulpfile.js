@@ -30,8 +30,8 @@ var files = {
   ],
 
   css: [
-    './src/components/data-table/base.css',
-    './src/components/data-table/custom.css'
+    './src/components/data-table/dmt-custom.css',
+    './src/components/data-table/dmt-base.css'
   ]
 };
 

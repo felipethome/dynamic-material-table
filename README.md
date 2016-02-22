@@ -1,12 +1,17 @@
 # Dynamic Material Table
 Reusable component of a dynamic data table with Material Design styles. This component uses [React](https://facebook.github.io/react/) and [Fixed Data Table](https://facebook.github.io/fixed-data-table/).  
   
-This is an effort to supply a good component that relies on [Fixed Data Table](https://facebook.github.io/fixed-data-table/) to fetch big amounts of data dynamically (using Ajax).
+This is an effort to supply a good component that relies on [Fixed Data Table](https://facebook.github.io/fixed-data-table/) to fetch big amounts of data dynamically (using Ajax) through a REST API.
 
 ## What dynamic means
 It means the data your table consumes will be fetched on demand. The component will try to make things smooth, so you will not notice the data is being fetched.
 
 ## How to install
+Run:
+
+    npm install dynamic-material-table
+
+## How to build
 Clone this repo:
     
     https://github.com/felipethome/dynamic-material-table
@@ -14,10 +19,6 @@ Clone this repo:
 Install the dependencies:
     
     npm install
-
-For a production version run:
-    
-    npm run deploy
 
 To mock data and build a developer version with a live reload server:
     
@@ -39,6 +40,14 @@ Here are the properties you can set (in bold are the ones you definetely should 
 * onSort: optional. A callback that will be called with and object that contains the column to be sorted and if this column will be sorted in ascending or descending order. Understand that the data is being fetched on demand which means is not possible to sort the rows in the client side.
 * tableHeight: optional. As the name suggests, it is the table height.
 * tableWidth: optional. As the name suggests, it is the table width.
+* **params:** optional. Object containing the name of the parameters for the REST API. Example:
+
+        params: {
+          start: '_start',
+          end: '_end',
+          sort: '_sort',
+          order: '_order'
+        }
 
 Advanced:
 
@@ -49,15 +58,15 @@ Advanced:
 The descriptionURL needs to return a JSON with two properties:
 
 1. rowsCount: integer. The maximum number of rows your table can have. This is a requirement of [Fixed Data Table](https://facebook.github.io/fixed-data-table/).
-2. columns: array. This is an array with the description of the columns your table can have. It can be an array of strings that will be the column names, or it can be an array of objects where each one looks like:
+2. columns: array. This is an array with the description of the columns your table can have. Each element in this array is an object with the following shape:
     
         {
-          key: 'col1', // Is required and it needs to be unique for each column
-          label: 'Example 1', // This is a string with a friendly name to show to the user
-          type: 'email', // It can be bold, link, email or image. If undefined it is just common text
-          width: 200, // The column width,
-          isResizable: true, // If true the column is resizable
-          isSortable: true // If true the column is sortable
+          key: 'col1', // String. Is required and it needs to be unique for each column
+          label: 'Example 1', // String. This is a string with a friendly name to show to the user
+          type: 'email', // String. It can be bold, link, email or image. If undefined it is just common text
+          width: 200, // Number. The column width,
+          isResizable: true, // Boolean. If true the column is resizable
+          isSortable: true // Boolean. If true the column is sortable
         }
 **Obs:** your columns array doesn't need to describe all the columns returned by the fetchURL, but it needs to describe the ones you want to show. In other words, just put in this array the columns you want to display to the user.
 **Tip:** that means you can have an ID column but not show it to the user. When the user clicks on a row all its columns (even the ones that are not being shown) will be passed to the onRowClick callback.
@@ -66,7 +75,16 @@ The descriptionURL needs to return a JSON with two properties:
 This needs to be a base URL that is able to return slices of your data. So lets suppose your fetchURL is example.com/data. The component will on demand make requests using this base as follows:
     
     example.com/data?_start=0&_end=101
-So the base URL needs to be prepared to receive requests with that format to retrieve the data.
+
+So the base URL needs to be prepared to receive requests with that format to retrieve the data. The *_start* and *_end* parameters are configurable using the *params* property of the component.
+
+### Sorting data
+Since this component fetches the data on demand is impossible to sort data in the client side. Nonetheless, the component offers the possibility to send parameters to the server to ask for the data to be sorted and makes the header clickable if the property *isSortable* is defined in the description JSON. It also renders a arrow symbol at the side of the header that will be sorted.  
+The request to the server will be made like the following:
+
+    example.com/data?_start=0&_end=101&_sort=column1&_order=ASC
+
+Again, the *_sort* and *_order* parameters are configurable using the *params* property of the component.
 
 ## Customize styles
-All the styles are within the file *material-table.css*. More documentation soon.
+All the styles are within the file *dynamic-material-table.css* in the dist folder if you are using npm, or if you cloned this repo and you want to use the source directly the styles you would like to modify are probably inside the *dmt-custom.css* file.
