@@ -15,9 +15,7 @@ ReactDOM.render(
     descriptionURL='http://localhost:3000/description'
     fetchURL='http://localhost:3000/data'
     tableWidth={1100}
-    resizable
-    selectable
-    sortable
+    isSelectable
     onClick={handleRowClick}
     onSort={handleSort}
   />,
