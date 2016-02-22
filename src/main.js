@@ -12,8 +12,8 @@ var handleSort = function (data) {
 
 ReactDOM.render(
   <DataTable
-    descriptionURL='http://localhost:3000/description'
-    fetchURL='http://localhost:3000/data'
+    descriptionURL='http://104.131.164.190:3000/description'
+    fetchURL='http://104.131.164.190:3000/data'
     tableWidth={window.innerWidth}
     tableHeight={window.innerHeight - 56}
     isResizable
