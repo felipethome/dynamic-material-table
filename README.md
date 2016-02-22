@@ -1,5 +1,9 @@
 # Dynamic Material Table
 Reusable component of a dynamic data table with Material Design styles. This component uses [React](https://facebook.github.io/react/) and [Fixed Data Table](https://facebook.github.io/fixed-data-table/).  
+
+![Screen Shot](http://felipethome.github.io/dynamic-material-table/demo/img/screenshot-2.png)
+
+[Demo](http://felipethome.github.io/dynamic-material-table)   
   
 This is an effort to supply a good component that relies on [Fixed Data Table](https://facebook.github.io/fixed-data-table/) to fetch big amounts of data dynamically (using Ajax) through a REST API.
 
