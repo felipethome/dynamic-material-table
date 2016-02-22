@@ -3,7 +3,7 @@ var FixedDataTable = require('fixed-data-table');
 var Update = require("react-addons-update");
 var CancelablePromise = require('../utils/cancelable-promise.js');
 var Request = require('../utils/request.js');
-var HandleStyles = require('../styles/handle-styles.js');
+var HandleStyles = require('../utils/handle-styles.js');
 
 var Table = FixedDataTable.Table;
 var Column = FixedDataTable.Column;
@@ -256,17 +256,13 @@ var DataTable = React.createClass({
   _createImageCell: function (content) {
     var styles = {
       img: {
-        width: 50,
-        height: 50,
-        backgroundImage: 'url(' + content + ')',
-        backgroundSize: '100%',
-        margin: '0 0 0 auto'
+        backgroundImage: 'url(' + content + ')'
       }
     };
 
     return (
       <div className="image-container">
-        <div style={styles.img}>{' '}</div>
+        <div className="image" style={styles.img}>{' '}</div>
       </div>
     );
   },
